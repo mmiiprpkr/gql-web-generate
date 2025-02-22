@@ -21,4 +21,4 @@ A modern web application that converts GraphQL schemas to TypeScript types with 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/mmiiprpkr/graphql-typescript-generator.git
+git clone https://github.com/mmiiprpkr/gql-web-generate.git
