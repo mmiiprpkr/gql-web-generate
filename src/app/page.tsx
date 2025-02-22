@@ -182,7 +182,7 @@ const GraphQLGenerator: React.FC = () => {
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent key={searchTerm}>
+            <CardContent>
               <Tabs defaultValue="code" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="code">Full Code</TabsTrigger>
