@@ -21,27 +21,29 @@ const GraphQLGenerator: React.FC = () => {
   const [endpoint, setEndpoint] = useState(
     "https://premium-service-v2.gtt-dev.sawasdeebyaot.com/graphql"
   );
-  const [document, setDocument] =
-    useState(`mutation WebPremiumServiceAdminApplyVoucher($code: String!) {
-    webPremiumServiceAdminApplyVoucher(code: $code) {
-      success
-      message
-      code
-      payload {
-        items {
-          voucherId
-          code
-          title
-          description
-          endAt
-          image
+  const [document, setDocument] = useState(`
+    mutation WebPremiumServiceAdminApplyVoucher($code: String!) {
+      webPremiumServiceAdminApplyVoucher(code: $code) {
+        success
+        message
+        code
+        payload {
+          items {
+            voucherId
+            code
+            title
+            description
+            endAt
+            image
+          }
         }
       }
     }
-  }`);
+  `);
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFetched, setIsFetched] = useState(false);
 
   const handleGenerate = async () => {
     setIsLoading(true);
@@ -54,9 +56,9 @@ const GraphQLGenerator: React.FC = () => {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
       setOutput(data.code);
+      setIsFetched(true);
     } catch (error) {
       if (error instanceof Error) setOutput(`Error: ${error.message}`);
-
       console.error("Error:", error);
       toast.error("Failed to generate TypeScript");
     } finally {
@@ -64,12 +66,15 @@ const GraphQLGenerator: React.FC = () => {
     }
   };
 
+  const handleReset = () => {
+    setIsFetched(false);
+    setOutput("");
+  };
+
   const copyCodeBlock = (block: string) => {
     navigator.clipboard
       .writeText(block)
-      .then(() => {
-        toast.success("Copied to clipboard");
-      })
+      .then(() => toast.success("Copied to clipboard"))
       .catch((err) => {
         console.error("Failed to copy: ", err);
         toast.error("Failed to copy to clipboard");
@@ -86,17 +91,10 @@ const GraphQLGenerator: React.FC = () => {
 
   const filteredCodeBlocks = useCallback(() => {
     const blocks = extractCodeBlocks();
-    console.log("Search Term:", searchTerm); // ตรวจสอบค่าที่ใช้ค้นหา
-    console.log("Blocks Before Filtering:", blocks);
-
     if (!searchTerm) return blocks;
-
-    const filtered = blocks.filter((block) =>
+    return blocks.filter((block) =>
       block.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    console.log("Filtered Blocks:", filtered);
-    return filtered;
   }, [extractCodeBlocks, searchTerm]);
 
   return (
@@ -114,46 +112,59 @@ const GraphQLGenerator: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label
-                htmlFor="endpoint"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                GraphQL Endpoint
-              </label>
-              <Input
-                id="endpoint"
-                type="text"
-                value={endpoint}
-                onChange={(e) => setEndpoint(e.target.value)}
-                placeholder="Enter GraphQL Endpoint"
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="document"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                GraphQL Document
-              </label>
-              <Textarea
-                id="document"
-                value={document}
-                onChange={(e) => setDocument(e.target.value)}
-                placeholder="Enter GraphQL Document"
-                className="w-full h-48"
-              />
-            </div>
+            {!isFetched && (
+              <>
+                <div>
+                  <label
+                    htmlFor="endpoint"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    GraphQL Endpoint
+                  </label>
+                  <Input
+                    id="endpoint"
+                    type="text"
+                    value={endpoint}
+                    onChange={(e) => setEndpoint(e.target.value)}
+                    placeholder="Enter GraphQL Endpoint"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="document"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    GraphQL Document
+                  </label>
+                  <Textarea
+                    id="document"
+                    value={document}
+                    onChange={(e) => setDocument(e.target.value)}
+                    placeholder="Enter GraphQL Document"
+                    className="w-full h-48"
+                  />
+                </div>
+              </>
+            )}
           </CardContent>
           <CardFooter>
-            <Button
-              onClick={handleGenerate}
-              disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90"
-            >
-              {isLoading ? "Generating..." : "Generate TypeScript"}
-            </Button>
+            {!isFetched ? (
+              <Button
+                onClick={handleGenerate}
+                disabled={isLoading}
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                {isLoading ? "Generating..." : "Generate TypeScript"}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleReset}
+                className="w-full bg-secondary hover:bg-secondary/90"
+              >
+                Fetch New Query
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </motion.div>
