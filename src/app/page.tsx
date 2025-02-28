@@ -200,12 +200,12 @@ const GraphQLGenerator: React.FC = () => {
                   <TabsTrigger value="copy">Extracted Blocks</TabsTrigger>
                 </TabsList>
                 <TabsContent value="code">
-                  <pre className="p-4 rounded bg-gray-100 overflow-x-auto max-h-96">
+                  <pre className="p-4 rounded bg-gray-100 overflow-x-auto min-h-screen">
                     <code>{output}</code>
                   </pre>
                 </TabsContent>
                 <TabsContent value="copy">
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                  <div className="space-y-4 min-h-screen overflow-y-auto">
                     {filteredCodeBlocks().map((block, index) => (
                       <div key={index} className="relative group">
                         <pre className="p-4 rounded bg-gray-100 overflow-x-auto">
