@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { codegen } from "@graphql-codegen/core";
 import { loadSchema } from "@graphql-tools/load";
 import { UrlLoader } from "@graphql-tools/url-loader";
-import { codegen } from "@graphql-codegen/core";
 import { parse, print } from "graphql";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -38,6 +38,14 @@ export async function POST(req: NextRequest) {
       },
       config: {
         onlyOperationTypes: true,
+        avoidOptionals: true,
+        maybeValue: "T | null",
+        inputMaybeValue: "T | undefined",
+        skipTypename: true,
+        namingConvention: {
+          typeNames: "pascal-case#pascalCase",
+          enumValues: "upper-case#upperCase",
+        },
       },
     };
 
