@@ -42,10 +42,6 @@ export async function POST(req: NextRequest) {
         maybeValue: "T | null",
         inputMaybeValue: "T | undefined",
         skipTypename: true,
-        namingConvention: {
-          typeNames: "pascal-case#pascalCase",
-          enumValues: "upper-case#upperCase",
-        },
       },
     };
 
